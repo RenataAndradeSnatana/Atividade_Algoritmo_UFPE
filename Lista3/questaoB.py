@@ -1,30 +1,39 @@
-n = int(input())  # quantidade de espaços de memória disponíveis
-m = int(input())  # quantidade de comandos a serem executados
-memory = [None] * n  # array de memória
-for i in range(m):
-    cmd = input().split()
-    if cmd[0] == 'ADD':
-        x = int(cmd[1])
-        idx = x % n  # calcula o índice do slot usando a função hash
-        while memory[idx] is not None:  # faz sondagem linear para encontrar um slot livre
-            idx = (idx + 1) % n
-        memory[idx] = x
-        print('E:', idx)
+quant_espaco_mem = int(input())  # Entrada para a quantidade de espaços de memória disponíveis.
+comandos = int(input())  # Entrada para a quantidade de comandos a serem executados.
+memoria = [None] * quant_espaco_mem  # Variável que representa uma lista inicialmente vazia conforme quantidade de memória
+
+for i in range(comandos): # For que itera conforme a qunatidade de (comandos) informado
+    cmd = input().split() # Entrada dos comandos no formato de lista
+    
+    #-------------------------- Inicio de verificação dos comandos de entrada
+    if cmd[0] == 'ADD': 
+        valor = int(cmd[1])  # Variável que armazenará o valor da posição 1 da entrada cmd a ser adicionado na memória da entrada cmd
+        posicao = valor % quant_espaco_mem  # Calculo da (posição) da memória em que o dado será armazenado para diminuir colisões
+        
+        while memoria[posicao] != None:  # Verificação de espaço livre
+            posicao = (posicao + 1) % quant_espaco_mem # Caso a posição já esteja ocupado o cáculo busca a próxima posição livre na memória
+        memoria[posicao] = valor
+        print('E:', posicao)
+        
     elif cmd[0] == 'SCH':
-        d = int(cmd[1])
-        idx = d % n  # calcula o índice do slot usando a função hash
-        while memory[idx] is not None and memory[idx] != d:  # faz sondagem linear para encontrar a chave
-            idx = (idx + 1) % n
-        if memory[idx] == d:
-            print('E:', idx)
+        busca = int(cmd[1]) # Variável que armazena o valor do segundo argumento passado no comando
+        posicao = busca % quant_espaco_mem  # Calculo que busca a posição usando a função hash
+        
+        while (memoria[posicao] != None) and (memoria[posicao] != busca): # Faz a verificação para encontrar o valor desejado
+            posicao = (posicao + 1) % quant_espaco_mem # Pecorrendo toda a lista caso com base nesse cálulo
+        if memoria[posicao] == busca:
+            print('E:', posicao)
         else:
             print('NE')
-    elif cmd[0] == 'CAP':
-        m = int(cmd[1])
-        if memory[m] is None:
+            
+    elif cmd[0] == 'CAP': # Verifica se o comando é para alterar a capacidade da tabela de dispersão.
+        comandos = int(cmd[1])
+        if memoria[comandos] == None:
             print('D')
         else:
-            print('A:', memory[m])
-    if None not in memory:  # verifica se há espaço livre no array
+            print('A:', memoria[comandos])
+    #-------------------------- Fim de verificação dos comandos de entrada   
+         
+    if memoria.count(None) == 0:  # Verifica se há espaço livre na mémoria
         print('Toda memoria utilizada')
         break
